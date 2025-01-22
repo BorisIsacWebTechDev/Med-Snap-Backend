@@ -1,0 +1,4 @@
+# CodeOwners for deferent files
+*.js  @frontend-team
+*.py  @backend-team
+#/docs/ @docs-team
