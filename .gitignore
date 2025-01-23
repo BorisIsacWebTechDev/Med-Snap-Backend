@@ -1,0 +1,17 @@
+# Ignor diretóries node_modules
+node_modules/
+
+# Ignor diretóries cache Python
+__pycache__/
+*.pyc
+
+# Ignor diretóries env or venv
+.env
+.venv
+
+# Ignorar logs
+*.log
+
+# Ignorar artefatos de build
+/dist/
+/build/
