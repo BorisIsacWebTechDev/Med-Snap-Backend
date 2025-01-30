@@ -55,10 +55,11 @@ class AbstractClinicalEmployee(AbstractUser):
         blank=True
     )
 
+
     contact_number = models.CharField(
         max_length=15,
         blank=True,
-        null=True
+        null=False
     )
 
     is_staff = models.BooleanField(
@@ -93,9 +94,6 @@ class DRClinicalEmployee(AbstractClinicalEmployee):
         dermotology = 'DERMOTOLOGY', 'DERMOTOLOGY'
         plastic_surgery = 'PLASTIC SURGERY', 'PLASTIC SURGERY'
         aesthetic_medicine_dermatologist = 'Aesthetic Medicine Dermatologist', 'Aesthetic Medicine Dermatologist'
-        s4 = 'SPECIALITY4', 'SPECIALITY4'
-        s5 = 'SPECIALITY5', 'SPECIALITY5'
-        s6 = 'SPECIALITY6', 'SPECIALITY6'
 
 
     medical_order_ID = models.CharField(

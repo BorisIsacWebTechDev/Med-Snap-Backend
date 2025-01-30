@@ -17,6 +17,7 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.views.generic.edit import CreateView
 
 
 class EmployeesAPIList(generics.ListAPIView):
@@ -24,7 +25,6 @@ class EmployeesAPIList(generics.ListAPIView):
     print(queryset)
     serializer_class = AbstractClinicalEmployeeSerializer
 
-from django.views.generic.edit import CreateView
 
 from .forms import RegisterForm
 
@@ -85,13 +85,10 @@ class RegisterView(View):
             return render(requests, 'employeers_form_template.html', context=context)
 
 
-    def post(self, requests):
-        form = RegisterForm(data=requests.POST)
+    def post(self, request):
+        form = RegisterForm(data=request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-
-
-            print('/+/+/+',requests, cd, make_password(cd['password1']))
             new_employee = AbstractClinicalEmployee(
                 email=cd['email'],
                 password=make_password(cd['password1']),
@@ -102,12 +99,36 @@ class RegisterView(View):
                 gender_employee=cd['gender_employee'],
                 is_staff=True
             )
-
-
             new_employee.save()
-            print(new_employee, new_employee.__dict__)
+
+
+            if cd['employee_type'] == AbstractClinicalEmployee.EmployeeType.DOCTOR:
+                print("Should be saved on dr table")
+                new_dr_employee = DRClinicalEmployee(
+                    email=cd['email'],
+                    password=make_password(cd['password1']),
+                    first_name=cd['first_name'],
+                    last_name=cd['last_name'],
+                    contact_number=cd['contact_number'],
+                    employee_type=cd['employee_type'],
+                    gender_employee=cd['gender_employee'],
+                    is_staff=True
+                )
+                new_dr_employee.save()
+            elif cd['employee_type'] == AbstractClinicalEmployee.EmployeeType.RECEPTION:
+                print("Should be saved on receptions")
+                new_reception_employee = ReceptionsClinicalEmployee(
+                    email=cd['email'],
+                    password=make_password(cd['password1']),
+                    first_name=cd['first_name'],
+                    last_name=cd['last_name'],
+                    contact_number=cd['contact_number'],
+                    employee_type=cd['employee_type'],
+                    gender_employee=cd['gender_employee'],
+                    is_staff=True
+                )
+                new_reception_employee.save()
             return HttpResponse(f'form is valid: {form.is_valid()} \n Requests.POST: {cd}')
-        print('/-/-/-')
         return HttpResponse(f'Form does not valid or resquests does not POST---{form}')
 
 
