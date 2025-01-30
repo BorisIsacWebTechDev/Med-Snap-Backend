@@ -107,7 +107,7 @@ class Services(models.Model):
         for obj in range(7):
             new_digit = random.choices(rand_digits)[0]
             res += new_digit
-            print('++++Scheduling ID has been generated', res)
+            print('Scheduling ID has been generated', res)
         return res
 
     def getter_scheduling_id_generator(self):
