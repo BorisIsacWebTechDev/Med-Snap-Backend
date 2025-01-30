@@ -13,16 +13,18 @@ In the root directory (./), there is a file named CODEOWNERS, which defines the 
     $ git --version
     git version 2.47.1.windows.2
     (The version number may be different depending on the latest Git release.)
+    
     1.2 Installing Git on Linux
     Open a terminal and update your package list:
-    sudo apt update
+        sudo apt update
     Install Git:
-    sudo apt install git
+        sudo apt install git
     Verify the installation:
-    git --version
+        git --version
+
     ✅ Expected output:
 
-    $ git --version
+    git --version
     git version 2.47.1
     (The version number may be different and possibly newer.)
 2️⃣ Setting Up GitHub
@@ -59,3 +61,58 @@ git clone https://github.com/BorisIsacWebTechDev/Med-Snap-Backend.git
 ✔ Push your changes regularly to avoid losing progress.
 ✔ Follow the repository guidelines for code style and structure.
 
+
+Install and Create a Virtual Environment
+1️⃣ Install Virtual Environment
+Open a terminal and type:
+    pip install virtualenv
+2️⃣ Create a Virtual Environment
+    Run the following command in the terminal:
+        python -m venv venv
+
+Activate a Virtual Environment
+    Windows:
+        <relative_path_to_venv>\venv\Scripts\activate
+    Linux/macOS:
+        source <relative_path_to_venv>/venv/bin/activate
+    Now your virtual environment is active! On your bash should write name of your Environment before username
+    in my case my env is VENV and it show me  
+    (VENV) <username> MINGW64 ~/<absolute_path_to_project> (<branch_name>)
+
+
+Installation of dependecies:
+    Into Med-Snap-Backend, we have a requirements.txt
+    Run instalation from requirements.txt with command "pip install -r requirements.txt" in terminal.A position on terminal should be in Med-Snap-Backend. It will install all dependencies in your Virtual Environment
+
+Postger PSQL:
+    After installing PostgreSQL (psql), we need to create a superuser using the command:
+    
+    "ALTER USER spawnkid19xxsnap WITH SUPERUSER;" 
+    
+    This superuser is created for testing and permissions. Additionally, this user is stored in the secret_files as the main user.
+
+    Now, let's grant permissions on the local machine using:
+    "ALTER USER spawnkid19xxsnap CREATEDB CREATEROLE;"
+    
+    To verify if the user exists, run:
+    
+    "\du"
+
+    After that, create a database named "snap".
+
+    Now it is time to import the database file.
+    If you are still inside the psql terminal, exit by typing:
+
+    "\q"
+    Then, in your terminal or command line, run:
+
+    "psql -U spawnkid19xxsnap -d snap -W -f '<path_to_db>/mydb_backup.sql'"
+    
+    👉 Replace <path_to_db> with the actual path to your .sql file.
+
+
+Navigate to Your Django Project
+    Open a terminal and move into your project directory: "cd /path/to/your/django_project"
+    Your path should be in the same level with file "manage.py". then Run server with comand "python manage.py runserver" or
+    "python3 manage.py runserver" if you use linux.
+    Open browser and insert a next link
