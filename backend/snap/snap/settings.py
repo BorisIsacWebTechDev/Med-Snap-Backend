@@ -151,7 +151,12 @@ LOGOUT_REDIRECT_URL = LOGIN_URL
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "main/static")]
+"""STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "main/static"),
+    os.path.join(BASE_DIR, "customer/static"),
+    os.path.join(BASE_DIR, "emp/static"),
+    
+    ]"""
 STATIC_URL = 'static/'
 
 # Default primary key field type
@@ -167,3 +172,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny'
     ]
 }
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/login" 

@@ -38,7 +38,7 @@ class LoginView(View):  # Use a distinct name for the view
             'button_submit': 'Login',
             'is_get_method': request.method == 'GET'
         }
-        return render(request, 'employees_form_template.html', context)
+        return render(request, '/registration/employees_form_template.html', context)
 
     def post(self, request):
         form = LoginForm(data=request.POST)
@@ -60,7 +60,7 @@ class LoginView(View):  # Use a distinct name for the view
                 login(request, employee)
             return redirect('main:index')  # Replace with your success URL
 
-        return render(request, 'employees_form_template.html', context)
+        return render(request, '/registration/employees_form_template.html', context)
 
 
 class LogoutView(View):
@@ -90,7 +90,7 @@ class RegisterView(View):
                 'form': form,
                 'button_submit': 'Register'
             }
-            return render(requests, 'employees_form_template.html', context=context)
+            return render(requests, '/registration/employees_form_template.html', context=context)
 
 
     def post(self, request):
@@ -138,7 +138,43 @@ class RegisterView(View):
             return redirect(reverse("employees:login"))
         context = {"error_msg": "something is wrong in your registration" }
         print(context)
-        return render(request, 'employees_form_template.html', context)
+        return render(request, '/registration/employees_form_template.html', context)
 
+
+class PasswordResetConfirmView(View):
+    def get(self, request):
+        form = RessetPasswordForm()
+        context = {
+            'form': form,
+            'title': 'Resset Password',
+            'title_form': 'Resset Password',
+            'button_submit': 'Send link by email',
+            'is_get_method': request.method == 'GET'
+        }
+        return render(request, 'registration/employees_form_template.html', context)
+
+    def post(self, request):
+        form = RessetPasswordForm(data=request.POST)
+        if form.is_valid():
+            
+            cd = form.cleaned_data
+            form = RessetPasswordForm()
+            print('+++++',cd)
+            context = {
+            'form': form,
+            'title': 'Resset Password',
+            'title_form': 'Resset Password',
+            'button_submit': 'Send link by email',
+            'is_get_method': request.method == 'GET',    
+            "error_msg": f"Email {cd['email']} does not exist in database EMPLOYEES",
+            
+            
+            }
+            print(context)
+            return render(request, 'registration/employees_form_template.html', context)
+            
+        context = {"error_msg": "Form invalid" }
+        print(context)
+        return render(request, 'employees_form_template.html', context)
 
 

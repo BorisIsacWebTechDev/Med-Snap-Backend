@@ -7,6 +7,9 @@
 <body>
     <form method="post">
         <h2> {{ title_form }} </h2>
+        {% if error_msg %}
+        <h4 style="color : red">{{ error_msg }}</h4>
+        {% endif %}
         {% csrf_token %}
         {{form.as_p}}
         <div class="btn_search">
