@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from rest_framework import generics
 from django.http import HttpResponse, JsonResponse
-
+from django.urls import reverse
 from django.contrib.auth.hashers import make_password
 
 from .serializer import AbstractClinicalEmployeeSerializer
@@ -32,27 +32,35 @@ class LoginView(View):  # Use a distinct name for the view
     def get(self, request):
         form = LoginForm()  # Instantiate the form
         context = {
-            'title': 'Login',
             'form': form,
-            'button_submit':'Login'
+            'title': 'Login',
+            'title_form': 'Login Employ',
+            'button_submit': 'Login',
+            'is_get_method': request.method == 'GET'
         }
-        return render(request, 'employeers_form_template.html', context)  # Pass the request object
+        return render(request, 'employees_form_template.html', context)
 
     def post(self, request):
         form = LoginForm(data=request.POST)
-        print('request.POST', request.method)
+
+        context = {
+            'form': form,
+            'title': 'Login',
+            'title_form': 'Login Employ',
+            'button_submit': 'Login',
+            'is_get_method': request.method == 'GET'
+        }
+
         if form.is_valid():
             cd = form.cleaned_data
-            print('****',cd)
             email = cd['username']
             psw = cd['password']
             employee = authenticate(request,email=email, password=psw)
-            print('-*-*-Employee', employee)
             if employee:
                 login(request, employee)
             return redirect('main:index')  # Replace with your success URL
 
-        return render(request, 'employeers_form_template.html', {'form': form, 'title': 'Login', 'button_submit': 'Login'})
+        return render(request, 'employees_form_template.html', context)
 
 
 class LogoutView(View):
@@ -78,30 +86,17 @@ class RegisterView(View):
         if form:
             context = {
                 'title': 'Registration',
-                'title_form': 'registration new employee',
+                'title_form': 'Registration new employee',
                 'form': form,
                 'button_submit': 'Register'
             }
-            return render(requests, 'employeers_form_template.html', context=context)
+            return render(requests, 'employees_form_template.html', context=context)
 
 
     def post(self, request):
         form = RegisterForm(data=request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            new_employee = AbstractClinicalEmployee(
-                email=cd['email'],
-                password=make_password(cd['password1']),
-                first_name=cd['first_name'],
-                last_name=cd['last_name'],
-                contact_number=cd['contact_number'],
-                employee_type=cd['employee_type'],
-                gender_employee=cd['gender_employee'],
-                is_staff=True
-            )
-            new_employee.save()
-
-
             if cd['employee_type'] == AbstractClinicalEmployee.EmployeeType.DOCTOR:
                 print("Should be saved on dr table")
                 new_dr_employee = DRClinicalEmployee(
@@ -128,7 +123,10 @@ class RegisterView(View):
                     is_staff=True
                 )
                 new_reception_employee.save()
-            return HttpResponse(f'form is valid: {form.is_valid()} \n Requests.POST: {cd}')
-        return HttpResponse(f'Form does not valid or resquests does not POST---{form}')
+            return redirect(reverse("employees:login"))
+        context = {"error_msg": "something is wrong in your registration" }
+        print(context)
+        return render(request, 'employees_form_template.html', context)
+
 
 
