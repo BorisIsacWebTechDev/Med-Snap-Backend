@@ -183,4 +183,4 @@ Navigate to Your Django Project
     Open a terminal and move into your project directory: "cd /path/to/your/django_project"
     Your position should be in the same level with file "manage.py". then Run server with command "python manage.py runserver" or
     "python3 manage.py runserver" if you use linux.
-    Open browser and insert a next link http://127.0.0.1:8000/ this link should redirect you to index page
+    Open browser and insert a next link http://127.0.0.1:8000/ this link should redirect you to index page 
