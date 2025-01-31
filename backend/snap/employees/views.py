@@ -123,6 +123,18 @@ class RegisterView(View):
                     is_staff=True
                 )
                 new_reception_employee.save()
+            else:
+                new_abstract_employee = AbstractClinicalEmployee(
+                    email=cd['email'],
+                    password=make_password(cd['password1']),
+                    first_name=cd['first_name'],
+                    last_name=cd['last_name'],
+                    contact_number=cd['contact_number'],
+                    employee_type=cd['employee_type'],
+                    gender_employee=cd['gender_employee'],
+                    is_staff=True
+                )
+                new_abstract_employee.save()
             return redirect(reverse("employees:login"))
         context = {"error_msg": "something is wrong in your registration" }
         print(context)
