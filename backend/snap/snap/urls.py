@@ -20,5 +20,13 @@ urlpatterns = [
             'employees.urls',
             namespace='employees'
         )
+    ),
+
+    path(
+        'snap/customers/',
+        include(
+            'customer.urls',
+            namespace='customers'
+        )
     )
 ]
