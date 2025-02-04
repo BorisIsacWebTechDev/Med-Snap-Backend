@@ -16,5 +16,11 @@
             <button type="submit" class="btn btn-primary">{{ button_submit }}</button>
         </div>
     </form>
+    {% if lol %}
+        <h3>
+            <a href="{% url 'employee:password_reset' %}">Forgotten your password?</a>
+        </h3>
+    {% endif %}
+
 </body>
 </html>
