@@ -12,7 +12,7 @@ __pycache__/
 /venv
 /env
 
-*/secret_files
+#*/secret_files
 
 # Ignorar logs
 *.log
@@ -52,4 +52,4 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-/backend/snap/secret_files/
+#/backend/snap/secret_files/
