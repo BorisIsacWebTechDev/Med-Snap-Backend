@@ -13,6 +13,8 @@
     {% else %}
     <h1><a href="{% url 'employee:login' %}">Employee Login</a></h1>
     <h1><a href="{% url 'employee:register' %}">Employee SignUp</a></h1>
+    <h3><a href="{% url 'employee:password_reset' %}">Resset Password</a></h3>
+
     {% endif %}
 </body>
 </html>

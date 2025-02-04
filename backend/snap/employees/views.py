@@ -93,7 +93,7 @@ class RegisterView(View):
                 'form': form,
                 'button_submit': 'Register'
             }
-            return render(requests, 'registration/employees_form_template.html', context=context)
+            return render(requests, 'employees_form_template.html', context=context)
 
 
     def post(self, request):
