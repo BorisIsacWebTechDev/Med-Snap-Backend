@@ -1,4 +1,3 @@
-boris isac Med-Snamp #teste Comit
 📜 Documentation for Med-Snap
 In the root directory (./), there is a file named CODEOWNERS, which defines the responsible reviewers for Python and JavaScript code.
 
