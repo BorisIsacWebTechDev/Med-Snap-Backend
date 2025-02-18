@@ -5,14 +5,9 @@ from rest_framework import generics
 from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.hashers import make_password
-
-from .serializer import AbstractClinicalEmployeeSerializer
+from .serializer import SingleUserSerializer
 from  .models import *
-
 from .forms import *
-
-
-
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,12 +16,9 @@ from django.views.generic.edit import CreateView
 
 
 class EmployeesAPIList(generics.ListAPIView):
-    queryset = AbstractClinicalEmployee.objects.all()
-    print(queryset)
-    serializer_class = AbstractClinicalEmployeeSerializer
+    queryset = SingleUser.objects.all()
+    serializer_class = SingleUserSerializer
 
-
-from .forms import RegisterForm
 
 class LoginView(View):  # Use a distinct name for the view
     def get(self, request):
@@ -99,7 +91,7 @@ class RegisterView(View):
             cd = form.cleaned_data
             if cd['employee_type'] == AbstractClinicalEmployee.EmployeeType.DOCTOR:
                 print("Should be saved on dr table")
-                new_dr_employee = DRClinicalEmployee(
+                new_dr_employee = SingleUser(
                     email=cd['email'],
                     password=make_password(cd['password1']),
                     first_name=cd['first_name'],

@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from .models import AbstractClinicalEmployee
+from .models import SingleUser
 
 
-class AbstractClinicalEmployeeSerializer(serializers.ModelSerializer):
+class SingleUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AbstractClinicalEmployee
+        model = SingleUser
         fields = ('id','first_name', 'last_name', 'contact_number', 'employee_type')

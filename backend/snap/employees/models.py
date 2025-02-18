@@ -1,122 +1,131 @@
 from dataclasses import field
-
 from autoslug.utils import slugify
-from django.contrib.auth.models import AbstractUser, User
+from django.contrib.auth.models import AbstractUser,BaseUserManager
 from django.db import models
 from django.utils.translation import gettext as _
-from django.contrib.auth.models import BaseUserManager
 
-class EmployeeManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+#TODO AO CRIAR UM NOVO REGISTO DEVE SER PEDIDO U NOME DE RESPONSAVEL DE CLINICA COM OS DADOS TODOS
+#É IMPORTANTISSIMO QUE O REGISTO SEJA FEITO POR UM RESPONSAVEL DE CLINICA
+#É IMPORTANTE QUE O REGISTO SEJA FEITO POR UM RESPONSAVEL DE CLINICA
+
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, first_name, last_name, password=None, **extra_fields):
         if not email:
-            raise ValueError('Email is required for Employees')
+            raise ValueError("The Email field must be set")
         email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(email=email, first_name=first_name, last_name=last_name, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        return self.create_user(email, password, **extra_fields)
+    def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(email, first_name, last_name, password, **extra_fields)
 
 
-class AbstractClinicalEmployee(AbstractUser):
-    objects = EmployeeManager()  # Убедитесь, что EmployeeManager определён корректно
-    email = models.EmailField(unique=True)
-    username = None
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ["first_name", "last_name"]
+#Abstract user model
+class AbstractSingleCustomUser(AbstractUser):
+    class Rules(models.TextChoices):
+        sl = 'Select', 'Select'
+        dr = 'Doctor', 'Doctor'
+        rc = 'Receptionist', 'Receptionist'
 
-    class Meta:
-        verbose_name = "Clinical Employee"
-        verbose_name_plural = "Clinical Employees"
-
-    class EmployeeType(models.TextChoices):
-        SELECT = 'Click to select', 'Click to select'
-        DOCTOR = 'DR', 'Doctor'
-        RECEPTION = 'RECEPTION', 'Reception'
-
-    class GenderClinicalEmployee(models.TextChoices):
+    class Gender(models.TextChoices):
         SELECT = 'Click to select', 'Click to select'
         MALE = 'Male', 'Male'
         FEMALE = 'Female', 'Female'
 
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='clinicalemployee_set',
-        blank=True
-    )
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField(unique=True)
+    contact_number = models.CharField(max_length=20)
+    gender= models.CharField(max_length=10, choices=Gender.choices, default=Gender.SELECT)  
+    role= models.CharField(max_length=10, choices=Rules.choices, default=Rules.sl)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    
 
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='clinicalemployee_permissions_set',
-        blank=True
-    )
-
-
-    contact_number = models.CharField(
-        max_length=15,
-        blank=True,
-        null=False
-    )
-
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=True,
-        help_text=_("Designates whether the user can log into this admin site."),
-    )
-
-    employee_type = models.CharField(
-        max_length=50,
-        choices=EmployeeType.choices,
-        default=EmployeeType.SELECT
-    )
-
-    gender_employee = models.CharField(
-        max_length=50,
-        choices=GenderClinicalEmployee.choices,
-        default=GenderClinicalEmployee.SELECT
-    )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.employee_type})"
+        return self.email
 
-
-class DRClinicalEmployee(AbstractClinicalEmployee):
+# Single receptionist User Model 
+class ReceptionsClinicalEmployee(AbstractSingleCustomUser):
     class Meta:
-        verbose_name = "DR"
-        verbose_name_plural = "DR's"
+        verbose_name = _('receptionist')
+        verbose_name_plural = _('receptionists')
 
-    class DrSpecialityType(models.TextChoices):
-        select_speciality = 'Click to select', 'Click to select'
-        dermotology = 'DERMOTOLOGY', 'DERMOTOLOGY'
-        plastic_surgery = 'PLASTIC SURGERY', 'PLASTIC SURGERY'
-        aesthetic_medicine_dermatologist = 'Aesthetic Medicine Dermatologist', 'Aesthetic Medicine Dermatologist'
-
-
-    medical_order_ID = models.CharField(
-        _("Medical Order ID"),
-        unique=True,
-        null=False,
-        help_text=_("A unique identifier for the medical order assigned to this user. This ID is used to track the user's medical orders.")
-    )
-
-    speciality_type = models.CharField(
-        max_length=50,
-        choices=DrSpecialityType.choices,
-        default='Click to select'
-    )
-
-    def __str__(self):
-        return f"Dr {self.first_name} {self.last_name} {self.medical_order_ID}"
-
-
-class ReceptionsClinicalEmployee(AbstractClinicalEmployee):
+# Single Doctor User Model
+class DrClinicalEmployee(AbstractSingleCustomUser):
     class Meta:
-        verbose_name = "Reception Assistant"
-        verbose_name_plural = "Reception's Assistant"
+        verbose_name = _('Dr')
+        verbose_name_plural = _('Dr\'s')
+
+    medical_order_id = models.CharField(max_length=50, unique=True)
+    specialty_type = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"(Reception) {self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}" 
+
+# Custom User Model(ofice with single dr(user))
+class CustomUser(DrClinicalEmployee):
+    class UserTypeChouse():
+        SINGLE = 'single', 'Single User'
+        HOSPITAL = 'hospital', 'Hospital User'
+
+    class Meta:
+        verbose_name = _('user')
+        verbose_name_plural = _('users')
+
+    user_type = models.CharField(
+        max_length=10, 
+        choices=UserTypeChouse, 
+        default=UserTypeChouse.SINGLE
+        )  
+
+# Hospital User Model
+class HospitalUser(CustomUser):
+    class Meta:
+        verbose_name = _('hospital')
+        verbose_name_plural = _('hospitals')
+    
+    class NumStaff(models.TextChoices):
+        beginer = '1-5', '1-5'
+        medium = '6-10', '6-10'
+        large = '11-20', '11-20'
+        very_large = '21-50', '21-50'
+        huge = '50+', '50+'
+
+    head_physician = models.ForeignKey(
+        "DrClinicalEmployee", 
+        verbose_name=_(""), 
+        on_delete=models.CASCADE, 
+        related_name='hospital_head_physician'
+        )
+    clinical_name = models.CharField(max_length=100)
+    tax_id = models.CharField(max_length=50, unique=True)
+    clinical_type = models.CharField(max_length=50)
+    country = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    address = models.TextField()
+    zip_code = models.CharField(max_length=10)
+    website = models.URLField(blank=True, null=True)
+    num_staff = models.CharField(
+        _("Num Staff"), 
+        max_length=10, 
+        choices=NumStaff.choices, 
+        default=NumStaff.beginer
+        )
+    
+    def save(self, *args, **kwargs):
+        if self.user_type != self.UserTypeChoices.HOSPITAL:
+            raise ValueError("HospitalUser can only be created if user_type is 'hospital'")
+        super().save(*args, **kwargs)
+
+
+    def __str__(self):
+        return self.clinical_name
