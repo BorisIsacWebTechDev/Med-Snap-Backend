@@ -184,3 +184,134 @@ Navigate to Your Django Project
     Your position should be in the same level with file "manage.py". then Run server with command "python manage.py runserver" or
     "python3 manage.py runserver" if you use linux.
     Open browser and insert a next link http://127.0.0.1:8000/ this link should redirect you to index page
+
+
+
+# Single User  
+
+A **Single User** is a doctor who works alone. They can register themselves but cannot add other users.  
+
+## Registration for a Single User  
+
+A **Single User** can register only if they are a doctor. They must fill in all the required fields:  
+
+- **First Name** (`CharField`)  
+- **Last Name** (`CharField`)  
+- **Email** (`CharField`)  
+- **Contact Number** (`Phone Number → CharField`)  
+- **Gender** (`CharField` → Male, Female)  
+- **Medical Order ID** (`CharField`)  
+- **Specialty Type** (`CharField` → type1, type2, ...)  
+- **Password**
+- **Confirm Password**
+
+---
+📌 *This registration is intended for individual doctors who do not belong to a clinic.*  
+
+## Login for Single User  
+
+To log in, the user must enter a registered email and password.  
+
+- If the email or password is incorrect, the user should receive an error message detailing the issue.  
+- The system should not specify whether the email exists for security reasons.  
+
+# Hospital User  
+
+A **Hospital User** represents a hospital with at least two employees.  
+
+- A **Superuser** (chief doctor or administrator) can add different types of employees, such as:  
+  - **Receptionists**  
+  - **Doctors**  
+  - **Other staff members**  
+
+## Registration for a Hospital User  
+
+## Registration and Login  
+
+- A **Hospital User** can register themselves.  
+- After logging in, they can add other employees.  
+- They must fill in all the required fields during registration.  
+
+### Required Fields  
+
+- **Name** (`CharField`)  
+- **Tax ID** (`CharField`)  
+- **Clinical Type** (`CharField`)  
+- **Contact Number** (`CharField`)  
+- **Head Physician** (`CharField`)  
+- **Email** (`CharField`)  
+- **Country** (`CharField`)  
+- **City** (`CharField`)  
+- **Address** (`CharField`)  
+- **ZIP Code** (`CharField`)  
+- **Website** (`CharField`)  
+- **Number of Staff** (`IntegerField`)  
+- **Number of Doctors** (`IntegerField`)  
+- **Password** (`CharField`)  
+- **Confirm Password** (`CharField`)  
+
+---
+
+📌 *This registration is intended for hospitals.*  
+
+
+
+
+# DataBase employee MODEL
+Database for employees has few classes.
+
+# Employee Management System (Django)
+
+A Django-based employee management system for medical record-keeping. This system supports both individual doctors and hospitals with multiple employees.
+Features
+
+✔️ User authentication and role-based access
+✔️ Support for individual doctors and hospital organizations
+✔️ Receptionists and doctors as separate user types
+✔️ Medical specialization and registration system
+✔️ Scalable hospital structure with a head physician
+
+
+
+- **AbstractSingleCustomUser** - is represent all employee individuals. Contain next fields:
+    - first_name --> models.CharField(max_length=50)
+    - last_name --> models.CharField(max_length=50)
+    - email --> models.EmailField(unique=True)
+    - contact_number --> models.CharField(max_length=20)
+    - gender --> models.CharField(["select", "male", "female"])  
+    - role --> models.CharField(["select", "Receptionist", "Dr"])
+    - is_active = models.BooleanField(default=True)
+    - is_staff = models.BooleanField(default=False)
+
+- **ReceptionsClinicalEmployee** - is represent receptionists. Is inherit from **AbstractSingleCustomUser** and do not contain any additional fields
+
+
+- **DrClinicalEmployee** - is represent Doctors. Is inherit from **AbstractSingleCustomUser** and contain few additional fields:
+    - medical_order_id = models.CharField(max_length=50, unique=True)
+    - specialty_type = models.CharField(max_length=50)
+
+- **CustomUser** - is represent Dr(singular or plural). Is inherit from **DrClinicalEmployee** and contain few additional fields:
+    - user_type = models.CharField(['single',' Hospital'])  
+
+- **HospitalUser** - is represent Dr(singular or plural). Is inherit from **CustomUser** and contain few additional fields:
+    - head_physician = models.ForeignKey(
+        "DrClinicalEmployee", 
+        verbose_name=_(""), 
+        on_delete=models.CASCADE, 
+        related_name='hospital_head_physician'
+        )
+    - clinical_name = models.CharField(max_length=100)
+    - tax_id = models.CharField(max_length=50, unique=True)
+    - clinical_type = models.CharField(max_length=50)
+    - country = models.CharField(max_length=50)
+    - city = models.CharField(max_length=50)
+    - address = models.TextField()
+    - zip_code = models.CharField(max_length=10)
+    - website = models.URLField(blank=True, null=True)
+    - num_staff = models.CharField(
+        beginner = '1-5', '1-5'
+        medium = '6-10', '6-10'
+        large = '11-20', '11-20'
+        very_large = '21-50', '21-50'
+        huge = '50+', '50+')
+
