@@ -7,7 +7,7 @@ from random import choices
 
 from django.db.models import CASCADE
 from django.utils.timezone import now
-from employees.models import SingleUser, ReceptionsClinicalEmployee
+from employees.models import DrClinicalEmployee, ReceptionsClinicalEmployee
 from customer.models import Customers
 
 from django.db import models
@@ -72,7 +72,7 @@ class Services(models.Model):
     price = models.FloatField()
 
     dr_id = models.ForeignKey(
-        SingleUser,
+        DrClinicalEmployee,
         related_name="+",
         on_delete= models.RESTRICT,
     )

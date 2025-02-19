@@ -186,6 +186,9 @@ Navigate to Your Django Project
     Open browser and insert a next link http://127.0.0.1:8000/ this link should redirect you to index page
 
 
+# Institution
+It is a app witch contain registrasion and login of helthcare instituition(Independent Doctor or Hospital)
+A institution while registered must spicify a **HEAD PHYSICIAN** witch will has aditionals nav bar with possibility to hire, fire employees. 
 
 # Single User  
 
@@ -272,7 +275,6 @@ Features
 ✔️ Scalable hospital structure with a head physician
 
 
-
 - **AbstractSingleCustomUser** - is represent all employee individuals. Contain next fields:
     - first_name --> models.CharField(max_length=50)
     - last_name --> models.CharField(max_length=50)
@@ -293,7 +295,7 @@ Features
 - **CustomUser** - is represent Dr(singular or plural). Is inherit from **DrClinicalEmployee** and contain few additional fields:
     - user_type = models.CharField(['single',' Hospital'])  
 
-- **HospitalUser** - is represent Dr(singular or plural). Is inherit from **CustomUser** and contain few additional fields:
+- **HospitalUser** - is represent Dr(singular or plural). Is inherit from **AbstractSingleCustomUser** and contain few additional fields:
     - head_physician = models.ForeignKey(
         "DrClinicalEmployee", 
         verbose_name=_(""), 
@@ -315,3 +317,35 @@ Features
         very_large = '21-50', '21-50'
         huge = '50+', '50+')
 
+Were excluded = ['username', 'first_name', 'last_name','gender', 'role'] fields from **HospitalUser** witch arived from **AbstractSingleCustomUser**
+
+# Registration
+**Single Dr registration**
+Is registration form with folow fields
+ - **email**
+ - **first_name**
+ - **last_name**
+ - **contact_number**
+ - **gender**
+ - **medical_order_id**
+ - **specialty_type**
+ - **password1**
+ - **password2**
+
+**Hospital registration**
+Is registration form with folow fields
+ - **clinical_name**
+ - **tax_id**
+ - **clinical_type**
+ - **country**
+ - **city**
+ - **address**
+ - **zip_code**
+ - **num_staff**
+After to click Signup New Hospital, a user will be redirected to **Single Dr registration**. After registration user will be registered like a **HEAD PHYSICIAN**
+
+**password1===password2** else forms.add_error("Passwords do not match.")
+
+
+# Login
+when user fuel a form with login, by the first step is to confirm if user exist in **healthcare_institution** and if user not exist, app should to check into **employees** TABLES

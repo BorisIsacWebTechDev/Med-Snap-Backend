@@ -6,12 +6,23 @@
 </head>
 <body>
     <form method="post">
-        <h2> {{ title_form }} </h2>
         {% csrf_token %}
+        <h2> {{ title_form }} </h2>
         {{form.as_p}}
+
+        {% if addicional_form %}
+        <h1>{{head_title}}</h1>
+        {{ addicional_form.as_p }}
+        {% endif %}
+
         <div class="btn_search">
             <button type="submit" class="btn btn-primary">{{ button_submit }}</button>
         </div>
     </form>
+
+    {% if addicional_form %}
+
+    {% endif %}
+
 </body>
 </html>

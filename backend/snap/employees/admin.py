@@ -1,20 +1,25 @@
 from django.contrib import admin
-from .models import CustomUser, SingleUser,ReceptionsClinicalEmployee, HospitalUser
+from .models import *
 
 
-class SingleUserAdmin(admin.ModelAdmin):
+class BasicCustomEmployeeAdmin(admin.ModelAdmin):
+    list_display = ['first_name', 'last_name', 'is_staff']
+
+
+class DrClinicalEmployeeAdmin(admin.ModelAdmin):
     exclude = ['username']
-    list_display = ['employee_type', 'first_name', 'last_name', 'is_staff']
+    list_display = ['first_name', 'last_name', 'is_staff']
 
 class ReceptionsClinicalEmployeeAdmin(admin.ModelAdmin):
     exclude = ['username']
-    list_display = ['employee_type', 'first_name', 'last_name']
+    list_display = ['first_name', 'last_name']
 
 class HospitalUSerAdmin(admin.ModelAdmin):
-    list_display = ['name', 'tax_id', 'clinical_type', 'email', 'number_of_staff']
-
+    exclude = ['username', 'email', 'contact_number', 'first_name', 'last_name','gender', 'role', 'password1', "password2"]
+    
 # Register your models here.
-admin.site.register(SingleUser, SingleUserAdmin)
+admin.site.register(BasicCustomEmployee, BasicCustomEmployeeAdmin)
+admin.site.register(DrClinicalEmployee, DrClinicalEmployeeAdmin)
 admin.site.register(ReceptionsClinicalEmployee, ReceptionsClinicalEmployeeAdmin)
 admin.site.register(HospitalUser, HospitalUSerAdmin)
 
