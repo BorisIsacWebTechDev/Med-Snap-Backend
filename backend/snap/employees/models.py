@@ -111,7 +111,7 @@ class SingleCustomUser(DrClinicalEmployee):
         )  
 
 # Hospital User Model
-class HospitalUser(BasicCustomEmployee):
+class HospitalUser(models.Model):
     class Meta:
         verbose_name = _('hospital')
         verbose_name_plural = _('hospitals')
